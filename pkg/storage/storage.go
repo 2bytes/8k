@@ -1,9 +1,10 @@
 package storage
 
 import (
-	"8192bytes/util"
 	"errors"
 	"time"
+
+	"github.com/2bytes/8k/util"
 )
 
 var (

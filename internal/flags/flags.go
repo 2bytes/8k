@@ -1,8 +1,9 @@
 package flags
 
 import (
-	"8192bytes/pkg/config"
 	"flag"
+
+	"github.com/2bytes/8k/pkg/config"
 )
 
 var (

@@ -1,17 +1,18 @@
 package backend
 
 import (
-	"8192bytes/internal/flags"
-	"8192bytes/pkg/frontend"
-	"8192bytes/pkg/storage"
-	"8192bytes/pkg/storage/inmemory"
-	"8192bytes/util"
 	"fmt"
 	"html/template"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/2bytes/8k/internal/flags"
+	"github.com/2bytes/8k/pkg/frontend"
+	"github.com/2bytes/8k/pkg/storage"
+	"github.com/2bytes/8k/pkg/storage/inmemory"
+	"github.com/2bytes/8k/util"
 )
 
 // Server defines all of the server configuration used throughout

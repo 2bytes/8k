@@ -1,11 +1,6 @@
 package main
 
 import (
-	"8192bytes/internal/flags"
-	"8192bytes/pkg/backend"
-	"8192bytes/pkg/storage"
-	"8192bytes/pkg/storage/inmemory"
-	"8192bytes/util"
 	"flag"
 	"fmt"
 	"log"
@@ -13,6 +8,12 @@ import (
 	"os"
 	"runtime"
 	"time"
+
+	"github.com/2bytes/8k/internal/flags"
+	"github.com/2bytes/8k/pkg/backend"
+	"github.com/2bytes/8k/pkg/storage"
+	"github.com/2bytes/8k/pkg/storage/inmemory"
+	"github.com/2bytes/8k/util"
 )
 
 func main() {
