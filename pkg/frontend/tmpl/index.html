@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <style>
+
+        :root {
+            --accent-colour: {{.AccentColour}};
+        }
+
+        html {
+            height: 100%;
+        }
+
+        body {
+            overflow-wrap: normal;
+            margin: 2%;
+            font-family: monospace;
+            width: fit-content;
+        }
+
+        a {
+            font-size: 12px;
+            text-decoration: none;
+            color: #2b2b2b;
+        }
+
+        h1 {
+            border-bottom: 2px solid var(--accent-colour);
+        }
+
+        input {
+            font-family: monospace;
+        }
+
+        #data {
+            padding: 1em;
+            width: calc(100% - 2em);
+            height: 300px;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: scroll;
+            font-family: monospace !important;
+            border-color: var(--accent-colour);
+        }
+
+        #wrapper {
+            line-height: 2.5;
+            white-space: pre-wrap;
+        }
+
+        #link {
+            border-bottom: 1px solid var(--accent-colour);
+        }
+
+        #path {
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        #error {
+            color: red;
+            display: inline-block;
+            margin-left: 10px;
+            white-space: pre-wrap;
+            width: 70%;
+        }
+
+        #submit {
+            border-color: var(--accent-colour);
+            font-weight: 600;
+            font-size: 16px;
+            padding: 10px;
+            width: 60px;
+            vertical-align: top;
+        }
+
+        #clipboard {
+            display: none;
+            cursor: pointer;
+            padding: 0.25em;
+            border: 1px solid var(--accent-colour);
+        }
+
+        .good-copy {
+            background-color: lightgreen;
+        }
+
+        .bad-copy {
+            background-color: red;
+        }
+
+        #footer-emoji {
+            display: inline;
+            font-family: serif;
+            font-size: 12px;
+        }
+
+        #content {
+            font-weight: 200; font-size: 12px;
+        }
+
+        #footer {
+            height: 8%;
+            padding-top: 1em;
+            border-top: 1px solid var(--accent-colour);
+        }
+
+    </style>
+</head>
+<body>
+    <h1>{{.Title}}</h1>
+This page will allow you to upload {{.MaxBytes}} bytes of your choice,
+to the endpoint specified below;
+
+    <pre id="content">
+<div id="wrapper"><a id=link>{{.Proto}}://{{.Address}}:{{.Port}}/<input id="path" type="text"/></a><div id="clipboard" onclick="copyToClipboard()">📋 Copy link to clipboard</div></div>
+<textarea placeholder="whitespace is preserved " id="data" name="data" maxlength="{{.MaxBytes}}" autocomplete="off"></textarea>
+
+<input id="submit" type="submit" onclick="window.onsubmit()" value="Go"><div id="error"></div>
+    </pre>
+    <script>
+
+        let pb = (d) => document.getElementById(d)
+        let path = pb("path")
+        let data = pb("data")
+        let link = pb("link")
+        let submit = pb("submit")
+        let errMsg = pb("error")
+        let cb = pb("clipboard")
+        path.value = "{{.RandomPath}}"
+        
+        function copyToClipboard() {
+            navigator.clipboard.writeText(link.innerText).then(function(){
+                clipboard.className = "good-copy"
+            },function(err){
+                clipboard.className = "bad-copy"
+            });
+        }
+
+        function handleErrors(resp) {
+            if (!resp.ok) {
+                return resp.text().then(function(text){
+                    throw Error(text)
+                });
+            }
+            return resp
+        }
+
+        window.onsubmit = () => {
+
+            if (path.value.length == 0 || data.value.length == 0) {
+                errMsg.innerHTML = "Uploading nothing, or to nowhere? What <i>is</i> nothing? Nowhere is <i>somewhere</i>, somewhere else."
+                return
+            }
+
+            errMsg.innerText = null;
+            submit.disabled = true
+            fetch("{{.Proto}}://{{.Address}}:{{.Port}}/"+encodeURI(path.value), {
+                method: 'POST',
+                body: data.value,
+            })
+            .then(handleErrors)
+            .then((resp) => resp.text())
+            .then((resp) => {
+                link.href = resp
+                link.className = "link"
+                link.innerText = resp
+                path.disabled = true
+                data.disabled = true
+                
+                if(navigator.clipboard) {
+                    clipboard.style.display = "block";
+                }
+
+                submit.remove()
+            })
+            .catch((err) => {
+                errMsg.innerText = err.message
+                submit.disabled = false
+            });
+        }
+    </script>
+</body>
+<footer id="footer">
+    Made with <div id="footer-emoji">☕</div> in <div id="footer-emoji">🇬🇧</div> | Source: (<a href="https://github.com/2bytes/8k">Github</a>)
+</footer>
+
+
