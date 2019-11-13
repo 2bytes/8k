@@ -60,7 +60,7 @@ buildah bud -f Dockerfile --build-arg VERSION='1.0.0-alpha1' -t 8192bytes .
 
 ## Binary
 ```
-CGO_ENABLED=0 go build -o 8192 -ldflags "-X 8192bytes/internal/flags.Version=1.0.0-alpha1" cmd/8192/main.go
+CGO_ENABLED=0 go build -o 8192 -ldflags "-X github.com/2bytes/8k/internal/flags.Version=1.0.0-alpha1" cmd/8192/main.go
 ```
 
 # Running
