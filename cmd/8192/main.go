@@ -9,7 +9,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/2bytes/8k/internal/flags"
+	"github.com/2bytes/8k/internal/config"
 	"github.com/2bytes/8k/pkg/backend"
 	"github.com/2bytes/8k/pkg/storage"
 	"github.com/2bytes/8k/pkg/storage/inmemory"
@@ -20,37 +20,37 @@ func main() {
 
 	flag.Parse()
 
-	if *flags.ShowVersion {
-		fmt.Printf("Version %q built using %s.\n", flags.Version, runtime.Version())
+	if *config.ShowVersion {
+		fmt.Printf("Version %q built using %s.\n", config.Version, runtime.Version())
 		os.Exit(0)
 	}
 
-	if *flags.PublicAddress == "" {
+	if *config.PublicAddress == "" {
 		log.Println("public address cannot be empty")
 		flag.Usage()
 		os.Exit(1)
 	}
 
-	s := backend.NewServer(storage.NewMediator(inmemory.New(*flags.DataTTL, time.Second, *flags.MaxItemsStored)))
+	s := backend.NewServer(storage.NewMediator(inmemory.New(*config.DataTTL, time.Second, *config.MaxItemsStored)))
 
 	http.HandleFunc("/", util.StatusCoder(s.HandleRequest))
 
-	bindAddr := *flags.BindAddress
+	bindAddr := *config.BindAddress
 
 	if bindAddr == "" {
 		bindAddr = "*"
 	}
 
 	var err error
-	fmt.Printf("UI address set to: %s\n", s.UI.BaseAddress())
+	fmt.Printf("UI address set to: %s\n", s.UIData.BaseAddress)
 
-	if *flags.BindTLS {
-		fmt.Printf("Binding: https://%s:%d\n", bindAddr, *flags.BindPort)
-		listenAddr := fmt.Sprintf("%s:%d", *flags.BindAddress, *flags.BindPort)
-		err = http.ListenAndServeTLS(listenAddr, *flags.TLSCertFile, *flags.TLSKeyFile, nil)
+	if *config.BindTLS {
+		fmt.Printf("Binding: https://%s:%d\n", bindAddr, *config.BindPort)
+		listenAddr := fmt.Sprintf("%s:%d", *config.BindAddress, *config.BindPort)
+		err = http.ListenAndServeTLS(listenAddr, *config.TLSCertFile, *config.TLSKeyFile, nil)
 	} else {
-		fmt.Printf("Binding: http://%s:%d\n", bindAddr, *flags.BindPort)
-		listenAddr := fmt.Sprintf("%s:%d", *flags.BindAddress, *flags.BindPort)
+		fmt.Printf("Binding: http://%s:%d\n", bindAddr, *config.BindPort)
+		listenAddr := fmt.Sprintf("%s:%d", *config.BindAddress, *config.BindPort)
 		err = http.ListenAndServe(listenAddr, nil)
 	}
 
