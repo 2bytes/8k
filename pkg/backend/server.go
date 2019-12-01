@@ -18,7 +18,6 @@ import (
 type Server struct {
 	config  *config.Config
 	Storage storage.Mediator
-	UIData  *frontend.Data
 }
 
 // NewServer creates a new instance of the server when provided with a storage backend
@@ -29,17 +28,26 @@ func NewServer(storageBackend storage.Mediator) Server {
 		Storage: storageBackend,
 	}
 
-	s.UIData = &frontend.Data{
-		Title:        s.config.Title,
-		AccentColour: s.config.AccentColour,
-		MaxBytes:     s.config.MaxBytes,
-		MaxItems:     s.config.MaxItemsStored,
-		TTL:          s.config.TTL,
-		BaseAddress:  s.config.FormatBaseAddress(),
-		RandomPath:   util.GenerateZBase32RandomPath(s.config.PathLength),
+	return s
+}
+
+// BaseAddress returns the servers public base address as configured.
+func (s *Server) BaseAddress() string {
+	return s.config.FormatBaseAddress()
+}
+
+func newUIData(config *config.Config) *frontend.Data {
+	ui := &frontend.Data{
+		Title:        config.Title,
+		AccentColour: config.AccentColour,
+		MaxBytes:     config.MaxBytes,
+		MaxItems:     config.MaxItemsStored,
+		TTL:          config.TTL,
+		BaseAddress:  config.FormatBaseAddress(),
+		RandomPath:   util.GenerateZBase32RandomPath(config.PathLength),
 	}
 
-	return s
+	return ui
 }
 
 func (s *Server) serveIndex(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +59,14 @@ func (s *Server) serveIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := tpl.Execute(w, s.UIData); err != nil {
+	ui := newUIData(s.config)
+
+	for s.Storage.Contains(ui.RandomPath) {
+		fmt.Printf("Path %s in use, generating another\n", ui.RandomPath)
+		ui.RandomPath = util.GenerateZBase32RandomPath(s.config.PathLength)
+	}
+
+	if err := tpl.Execute(w, ui); err != nil {
 		fmt.Println(err)
 	}
 }
@@ -100,7 +115,7 @@ func (s *Server) uploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(s.UIData.BaseAddress + encodedURL.Path))
+	w.Write([]byte(s.config.FormatBaseAddress() + encodedURL.Path))
 }
 
 func (s *Server) serveUploaded(w http.ResponseWriter, r *http.Request) {
