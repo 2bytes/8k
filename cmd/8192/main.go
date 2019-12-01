@@ -35,21 +35,20 @@ func main() {
 
 	http.HandleFunc("/", util.StatusCoder(s.HandleRequest))
 
-	bindAddr := *config.BindAddress
-
-	if bindAddr == "" {
-		bindAddr = "*"
+	bindAddrDisplay := *config.BindAddress
+	if bindAddrDisplay == "" {
+		bindAddrDisplay = "*"
 	}
 
 	var err error
-	fmt.Printf("UI address set to: %s\n", s.UIData.BaseAddress)
+	fmt.Printf("UI address set to: %s\n", s.BaseAddress())
 
 	if *config.BindTLS {
-		fmt.Printf("Binding: https://%s:%d\n", bindAddr, *config.BindPort)
+		fmt.Printf("Binding: https://%s:%d\n", bindAddrDisplay, *config.BindPort)
 		listenAddr := fmt.Sprintf("%s:%d", *config.BindAddress, *config.BindPort)
 		err = http.ListenAndServeTLS(listenAddr, *config.TLSCertFile, *config.TLSKeyFile, nil)
 	} else {
-		fmt.Printf("Binding: http://%s:%d\n", bindAddr, *config.BindPort)
+		fmt.Printf("Binding: http://%s:%d\n", bindAddrDisplay, *config.BindPort)
 		listenAddr := fmt.Sprintf("%s:%d", *config.BindAddress, *config.BindPort)
 		err = http.ListenAndServe(listenAddr, nil)
 	}

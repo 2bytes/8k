@@ -39,7 +39,7 @@ func (s *Storage) Store(key string, data []byte) error {
 		return ErrorStorageFull
 	}
 
-	if _, used := s.dataStore[key]; !used {
+	if !s.Contains(key) {
 		exp := time.Now().Add(s.TTL)
 		s.dataStore[key] = Object{Data: data, Expires: &exp}
 		fmt.Printf("Added value, size: %d. Status: %d/%d\n", len(data), len(s.dataStore), s.MaxItems)
@@ -51,6 +51,12 @@ func (s *Storage) Store(key string, data []byte) error {
 // Retrieve implements the Retrieve function to satisfy StoreRetriever
 func (s *Storage) Retrieve(key string) ([]byte, error) {
 	return s.dataStore[key].Data, nil
+}
+
+// Contains implements the Contains function to satisfy StoreRetriever
+func (s *Storage) Contains(key string) bool {
+	_, ok := s.dataStore[key]
+	return ok
 }
 
 func (s *Storage) scrub() {

@@ -8,6 +8,16 @@
 
         :root {
             --accent-colour: {{.AccentColour}};
+
+            --drk-fg: #ccc;
+            --drk-bg: #000;
+            --drk-in-fg: #ccc;
+            --drk-in-bg: #111;
+
+            --fg: #2b2b2b;
+            --bg: #fff;
+            --in-fg: #111;
+            --in-bg: #ccc;
         }
 
         html {
@@ -15,28 +25,48 @@
         }
 
         body {
+            color: var(--fg);
+            background-color: var(--bg);
             overflow-wrap: normal;
             margin: 2%;
-            font-family: monospace;
+            font-family: sans-serif;
             width: fit-content;
             height: 100%;
         }
 
+        .dark {
+                color: var(--drk-fg);
+                background-color: var(--drk-bg);
+        }
+
         a {
-            font-size: 12px;
             text-decoration: none;
-            color: #2b2b2b;
+            color: var(--fg);
+        }
+
+        .dark a {
+            color: var(--drk-fg);
         }
 
         h1 {
+            font-family: monospace;
             border-bottom: 2px solid var(--accent-colour);
         }
 
         input {
+            color: var(--in-fg);
+            background-color: var(--in-bg);
             font-family: monospace;
         }
 
+        .dark input {
+            color: var(--drk-in-fg);
+            background-color: var(--drk-in-bg);
+        }
+
         #data {
+            color: var(--in-fg);
+            background-color: var(--in-bg);
             padding: 1em;
             width: calc(100% - 2em);
             height: 60%;
@@ -45,6 +75,11 @@
             overflow-x: scroll;
             font-family: monospace !important;
             border-color: var(--accent-colour);
+        }
+
+        .dark #data {
+            color: var(--drk-in-fg);
+            background-color: var(--drk-in-bg);
         }
 
         #wrapper {
@@ -57,8 +92,17 @@
         }
 
         #path {
+            border: none;
+            color: var(--in-fg);
+            background-color: var(--in-bg);
             font-family: monospace;
             font-size: 12px;
+        }
+
+        .dark #path {
+            color: var(--drk-in-fg);
+            background-color: var(--drk-in-bg);
+
         }
 
         #error {
@@ -110,11 +154,18 @@
             border-top: 1px solid var(--accent-colour);
         }
 
+        .theme {
+            float: right;
+            font-family: sans-serif;
+            font-size: 0.7em;
+            text-decoration: none;
+        }
+
     </style>
 </head>
 <body>
-    <h1>{{.Title}}</h1>
-<h3>This server is configured to allow {{ .MaxItems }} links of {{ .MaxBytes }} bytes. The TTL is configured for {{ .TTL }} after which time your link will be deleted.</h3>
+    <h1>{{.Title}} <div class="theme"><a href="#">🌗</a></div></h1>
+<h4>This server is configured to allow {{ .MaxItems }} links of {{ .MaxBytes }} bytes. The TTL is configured for {{ .TTL }} after which time your link will be deleted.</h4>
 
     <pre id="content">
 <div id="wrapper"><a id=link>{{ .BaseAddress }}<input id="path" type="text"/></a><div id="clipboard" onclick="copyToClipboard()">📋 Copy link to clipboard</div>
@@ -184,6 +235,20 @@
                 submit.disabled = false
             });
         }
+
+        // Toggle theme
+        if (window.localStorage) {
+            const ts = window.localStorage.getItem("theme");
+            if (ts !== null) {
+                document.body.classList.toggle("dark", ts === "dark");
+            }
+
+            document.querySelector(".theme").addEventListener("click", () => {
+                document.body.classList.toggle("dark");
+                window.localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+            });
+        }
+
     </script>
 </body>
 <footer id="footer">
