@@ -6,9 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strconv"
 
-	"github.com/2bytes/8k/internal/flags"
+	"github.com/2bytes/8k/internal/config"
 	"github.com/2bytes/8k/pkg/frontend"
 	"github.com/2bytes/8k/pkg/storage"
 	"github.com/2bytes/8k/pkg/storage/inmemory"
@@ -17,52 +16,57 @@ import (
 
 // Server defines all of the server configuration used throughout
 type Server struct {
-	UI         frontend.UI
-	PathLength int
-	BindTLS    bool
-	MaxBytes   int
-	Storage    storage.Mediator
+	config  *config.Config
+	Storage storage.Mediator
 }
 
 // NewServer creates a new instance of the server when provided with a storage backend
 func NewServer(storageBackend storage.Mediator) Server {
 
 	s := Server{
-		UI: frontend.UI{
-			Title:        *flags.PageTitle,
-			AccentColour: *flags.AccentColour,
-			ProtoTLS:     *flags.PublicProtoTLS || *flags.BindTLS,
-			Address:      *flags.PublicAddress,
-			Port:         *flags.PublicPort,
-		},
-		MaxBytes:   *flags.MaxBytes,
-		PathLength: *flags.PathLength,
-		Storage:    storageBackend,
+		config:  config.Get(),
+		Storage: storageBackend,
 	}
 
 	return s
 }
 
+// BaseAddress returns the servers public base address as configured.
+func (s *Server) BaseAddress() string {
+	return s.config.FormatBaseAddress()
+}
+
+func newUIData(config *config.Config) *frontend.Data {
+	ui := &frontend.Data{
+		Title:        config.Title,
+		AccentColour: config.AccentColour,
+		MaxBytes:     config.MaxBytes,
+		MaxItems:     config.MaxItemsStored,
+		TTL:          config.TTL,
+		BaseAddress:  config.FormatBaseAddress(),
+		RandomPath:   util.GenerateZBase32RandomPath(config.PathLength),
+	}
+
+	return ui
+}
+
 func (s *Server) serveIndex(w http.ResponseWriter, r *http.Request) {
 
-	tpl, err := template.ParseFiles(*flags.UIFileHTML)
+	tpl, err := template.ParseFiles(*config.UIFileHTML)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Failed to load index file template", http.StatusInternalServerError)
 		return
 	}
 
-	pd := frontend.Data{
-		Title:        s.UI.Title,
-		AccentColour: s.UI.AccentColour,
-		Proto:        s.UI.ProtoString(),
-		Address:      s.UI.Address,
-		Port:         strconv.Itoa(s.UI.Port),
-		MaxBytes:     s.MaxBytes,
-		RandomPath:   util.GenerateZBase32RandomPath(s.PathLength),
+	ui := newUIData(s.config)
+
+	for s.Storage.Contains(ui.RandomPath) {
+		fmt.Printf("Path %s in use, generating another\n", ui.RandomPath)
+		ui.RandomPath = util.GenerateZBase32RandomPath(s.config.PathLength)
 	}
 
-	if err := tpl.Execute(w, pd); err != nil {
+	if err := tpl.Execute(w, ui); err != nil {
 		fmt.Println(err)
 	}
 }
@@ -85,9 +89,9 @@ func (s *Server) uploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(data) > s.MaxBytes {
-		fmt.Printf("Uploaded data larger than max allowed bytes (%d) got: %d\n", s.MaxBytes, len(data))
-		http.Error(w, fmt.Sprintf("request data larger than max allowed (%d bytes)", s.MaxBytes), http.StatusRequestEntityTooLarge)
+	if len(data) > s.config.MaxBytes {
+		fmt.Printf("Uploaded data larger than max allowed bytes (%d) got: %d\n", s.config.MaxBytes, len(data))
+		http.Error(w, fmt.Sprintf("request data larger than max allowed (%d bytes)", s.config.MaxBytes), http.StatusRequestEntityTooLarge)
 	}
 
 	err = s.Storage.Store(fileName, data)
@@ -111,7 +115,7 @@ func (s *Server) uploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(s.UI.BaseAddress() + encodedURL.Path))
+	w.Write([]byte(s.config.FormatBaseAddress() + encodedURL.Path))
 }
 
 func (s *Server) serveUploaded(w http.ResponseWriter, r *http.Request) {

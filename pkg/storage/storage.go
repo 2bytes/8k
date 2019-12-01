@@ -29,6 +29,7 @@ type Storer interface {
 // Retriever wraps the retriever function
 type Retriever interface {
 	Retrieve(key string) ([]byte, error)
+	Contains(key string) bool
 }
 
 // StoreRetriever groups Storer and Retriever functions
@@ -83,6 +84,22 @@ func (sm *Mediator) Load(fileName string) ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+// Contains takes a path and returns whether or not the value is contained in the data store
+func (sm *Mediator) Contains(fileName string) bool {
+
+	if len(fileName) == 0 {
+		return false
+	}
+
+	key, err := util.HashForPath(fileName)
+	if err != nil {
+		return false
+	}
+
+	return sm.StoreRetriever.Contains(key)
+
 }
 
 // NewMediator instantiates a new Mediator for a gien StoreRetriever, allowing sanitisation of data before storage
