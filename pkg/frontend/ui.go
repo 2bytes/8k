@@ -13,4 +13,5 @@ type Data struct {
 	TTL          time.Duration
 	BaseAddress  string
 	RandomPath   string
+	Version      string
 }

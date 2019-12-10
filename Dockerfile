@@ -6,7 +6,7 @@ WORKDIR /go/src/8k
 COPY . .
 
 RUN go test -v ./...
-RUN CGO_ENABLED=0 go build -o 8192 -ldflags "-X github.com/2bytes/8k/internal/flags.Version=${VERSION}" cmd/8192/main.go
+RUN CGO_ENABLED=0 go build -o 8192 -ldflags "-X github.com/2bytes/8k/internal/config.Version=${VERSION}" cmd/8192/main.go
 RUN ./8192 -v
 
 FROM scratch

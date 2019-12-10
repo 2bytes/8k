@@ -36,15 +36,16 @@ func (s *Server) BaseAddress() string {
 	return s.config.FormatBaseAddress()
 }
 
-func newUIData(config *config.Config) *frontend.Data {
+func newUIData(c *config.Config) *frontend.Data {
 	ui := &frontend.Data{
-		Title:        config.Title,
-		AccentColour: config.AccentColour,
-		MaxBytes:     config.MaxBytes,
-		MaxItems:     config.MaxItemsStored,
-		TTL:          config.TTL,
-		BaseAddress:  config.FormatBaseAddress(),
-		RandomPath:   util.GenerateZBase32RandomPath(config.PathLength),
+		Title:        c.Title,
+		AccentColour: c.AccentColour,
+		MaxBytes:     c.MaxBytes,
+		MaxItems:     c.MaxItemsStored,
+		TTL:          c.TTL,
+		BaseAddress:  c.FormatBaseAddress(),
+		RandomPath:   util.GenerateZBase32RandomPath(c.PathLength),
+		Version:      config.Version,
 	}
 
 	return ui
