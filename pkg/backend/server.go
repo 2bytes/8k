@@ -76,6 +76,10 @@ func (s *Server) uploadFile(w http.ResponseWriter, r *http.Request) {
 
 	fileName := r.URL.Path[1:]
 
+	if fileName == "" {
+		fileName = util.GenerateZBase32RandomPath(config.Get().PathLength)
+	}
+
 	encodedURL, err := url.Parse(fileName)
 	if err != nil {
 		fmt.Println(err)
