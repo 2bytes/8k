@@ -20,18 +20,15 @@
             --in-bg: #ccc;
         }
 
-        html {
-            height: 100%;
-        }
-
         body {
             color: var(--fg);
             background-color: var(--bg);
             overflow-wrap: normal;
-            margin: 2%;
             font-family: sans-serif;
             width: fit-content;
-            height: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .dark {
@@ -66,14 +63,17 @@
         #data {
             color: var(--in-fg);
             background-color: var(--in-bg);
-            padding: 1em;
-            width: calc(100% - 2em);
-            height: 60%;
-            white-space: pre;
+            padding: 0.5em;
+            height: 50vh;
             overflow-wrap: normal;
             overflow-x: scroll;
             font-family: monospace !important;
             border-color: var(--accent-colour);
+            width: 100%;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+
         }
 
         .dark #data {
@@ -82,12 +82,17 @@
         }
 
         #wrapper {
-            line-height: 2.5;
+            line-height: 2.0;
             white-space: pre-wrap;
         }
 
         #link {
+            overflow-wrap: break-word;
+            font-size: 1.5em;
             border-bottom: 1px solid var(--accent-colour);
+            margin-bottom: 10px;
+            text-decoration: none;
+            font-family: monospace;
         }
 
         #path {
@@ -95,7 +100,7 @@
             color: var(--in-fg);
             background-color: var(--in-bg);
             font-family: monospace;
-            font-size: 12px;
+            font-size: 1.5em;
         }
 
         .dark #path {
@@ -119,12 +124,14 @@
             padding: 10px;
             width: 60px;
             vertical-align: top;
+            margin-bottom: 2px;
         }
 
-        #clipboard {
+        #clipboard,#share {
             display: none;
             cursor: pointer;
-            padding: 0.25em;
+            padding: 0.5em;
+            margin-bottom: 5px;
             border: 1px solid var(--accent-colour);
         }
 
@@ -144,12 +151,11 @@
 
         #content {
             font-weight: 200; font-size: 12px;
-            height: 80%;
         }
 
         #footer {
-            height: 8%;
-            padding-top: 1em;
+            font-size: 10px;
+            margin-top: auto;
             border-top: 1px solid var(--accent-colour);
         }
 
@@ -169,92 +175,111 @@
     <h1>{{.Title}} <div class="theme"><a href="#">🌗</a></div></h1>
 <h4>This server is configured to allow {{ .MaxItems }} links of {{ .MaxBytes }} bytes. The TTL is configured for {{ .TTL }} after which time your link will be deleted.</h4>
 
-    <pre id="content">
-<div id="wrapper"><a id=link>{{ .BaseAddress }}<input id="path" type="text"/></a><div id="clipboard" onclick="copyToClipboard()">📋 Copy link to clipboard</div>
-</div>
+<div id="content">
+<div id="wrapper"><div style="padding-bottom: 2em;"><a id=link>{{ .BaseAddress }}<input id="path" type="text"/></a></div><div id="clipboard" onclick="copyToClipboard()">📋 Copy to Clipboard</div></a><div id="share" onclick="shareLink()">📤 Share</div></div>
 <textarea placeholder="whitespace is preserved " id="data" name="data" maxlength="{{ .MaxBytes }}" autocomplete="off"></textarea>
 
 <input id="submit" type="submit" onclick="window.onsubmit()" value="Go"><div id="error"></div>
-    </pre>
-    <script>
+</div>
 
-        let pb = (d) => document.getElementById(d)
-        let path = pb("path")
-        let data = pb("data")
-        let link = pb("link")
-        let submit = pb("submit")
-        let errMsg = pb("error")
-        let cb = pb("clipboard")
-        path.value = "{{ .RandomPath }}"
-        
-        function copyToClipboard() {
-            navigator.clipboard.writeText(link.innerText).then(function(){
-                clipboard.className = "good-copy"
-            },function(err){
-                clipboard.className = "bad-copy"
-            });
-        }
-
-        function handleErrors(resp) {
-            if (!resp.ok) {
-                return resp.text().then(function(text){
-                    throw Error(text)
-                });
-            }
-            return resp
-        }
-
-        window.onsubmit = () => {
-
-            if (path.value.length == 0 || data.value.length == 0) {
-                errMsg.innerHTML = "Uploading nothing, or to nowhere? What <i>is</i> nothing? Nowhere is <i>somewhere</i>, somewhere else."
-                return
-            }
-
-            errMsg.innerText = null;
-            submit.disabled = true
-            fetch("{{ .BaseAddress }}"+encodeURI(path.value), {
-                method: 'POST',
-                body: data.value,
-            })
-            .then(handleErrors)
-            .then((resp) => resp.text())
-            .then((resp) => {
-                link.href = resp
-                link.className = "link"
-                link.innerText = resp
-                path.disabled = true
-                data.disabled = true
-                
-                if(navigator.clipboard) {
-                    clipboard.style.display = "block";
-                }
-
-                submit.remove()
-            })
-            .catch((err) => {
-                errMsg.innerText = err.message
-                submit.disabled = false
-            });
-        }
-
-        // Toggle theme
-        if (window.localStorage) {
-            const ts = window.localStorage.getItem("theme");
-            if (ts !== null) {
-                document.body.classList.toggle("dark", ts === "dark");
-            }
-
-            document.querySelector(".theme").addEventListener("click", () => {
-                document.body.classList.toggle("dark");
-                window.localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-            });
-        }
-
-    </script>
-</body>
 <footer id="footer">
     [ Made with <div id="footer-emoji">☕</div> in <div id="footer-emoji">🇬🇧</div> ] <b>src:</b> <a href="https://github.com/2bytes/8k">Github</a>, <b>v:</b> {{ .Version }}
 </footer>
+
+<script>
+let pb = (d) => document.getElementById(d)
+let path = pb("path")
+let data = pb("data")
+let link = pb("link")
+let submit = pb("submit")
+let errMsg = pb("error")
+let cb = pb("clipboard")
+path.value = "{{ .RandomPath }}"
+
+function copyToClipboard() {
+    navigator.clipboard.writeText(link.innerText).then(function(){
+        clipboard.className = "good-copy"
+    },function(err){
+        clipboard.className = "bad-copy"
+    });
+}
+
+function shareLink() {
+    // Share
+    navigator.share({
+        title: '8k.fyi',
+        text: 'Check out this share on 8k.fyi',
+        url: "{{ .BaseAddress }}"+encodeURI(path.value),
+    })
+        .then(() => console.log('Shared'))
+        .catch((error) => console.log('Error sharing', error));
+}
+
+function handleErrors(resp) {
+    if (!resp.ok) {
+        return resp.text().then(function(text){
+            throw Error(text)
+        });
+    }
+    return resp
+}
+
+window.onsubmit = () => {
+
+    if (path.value.length == 0 || data.value.length == 0) {
+        errMsg.innerHTML = "Uploading nothing, or to nowhere? What <i>is</i> nothing? Nowhere is <i>somewhere</i>, somewhere else."
+        return
+    }
+
+    errMsg.innerText = null;
+    submit.disabled = true
+    fetch("{{ .BaseAddress }}"+encodeURI(path.value), {
+        method: 'POST',
+        body: data.value,
+    })
+    .then(handleErrors)
+    .then((resp) => resp.text())
+    .then((resp) => {
+        link.href = resp
+        link.className = "link"
+        link.innerText = resp
+        path.disabled = true
+        data.disabled = true
+
+        if(navigator.clipboard) {
+            clipboard.style.display = "block";
+        }
+
+        if(navigator.share) {
+            share.style.display = "block";
+        }
+            else {
+                console.log("share not supported");
+            }
+
+        submit.remove()
+    })
+    .catch((err) => {
+        errMsg.innerText = err.message
+        submit.disabled = false
+    });
+}
+
+// Toggle theme
+if (window.localStorage) {
+    const ts = window.localStorage.getItem("theme");
+    if (ts !== null) {
+        document.body.classList.toggle("dark", ts === "dark");
+    }
+
+    document.querySelector(".theme").addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+        window.localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+    });
+}
+</script>
+
+</body>
+</html>
 
 
