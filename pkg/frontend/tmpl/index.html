@@ -66,13 +66,14 @@
             padding: 0.5em;
             height: 50vh;
             overflow-wrap: normal;
-            overflow-x: scroll;
+            overflow-x: auto;
             font-family: monospace !important;
             border-color: var(--accent-colour);
             width: 100%;
             -webkit-box-sizing: border-box;
             -moz-box-sizing: border-box;
             box-sizing: border-box;
+            margin-bottom: 1em;
 
         }
 
@@ -88,11 +89,12 @@
 
         #link {
             overflow-wrap: break-word;
-            font-size: 1.5em;
             border-bottom: 1px solid var(--accent-colour);
             margin-bottom: 10px;
             text-decoration: none;
+            font-size: 1.5em;
             font-family: monospace;
+            font-weight: normal;
         }
 
         #path {
@@ -121,10 +123,10 @@
             border-color: var(--accent-colour);
             font-weight: 600;
             font-size: 16px;
-            padding: 10px;
-            width: 60px;
+            padding: 10pt;
+            width: 40pt;
             vertical-align: top;
-            margin-bottom: 2px;
+            margin-bottom: 1em;
         }
 
         #clipboard,#share {
@@ -133,13 +135,16 @@
             padding: 0.5em;
             margin-bottom: 5px;
             border: 1px solid var(--accent-colour);
+            font-weight: normal;
         }
 
         .good-copy {
-            background-color: lightgreen;
+            color: black;
+            background-color: chartreuse;
         }
 
         .bad-copy {
+            color: black;
             background-color: red;
         }
 
@@ -199,8 +204,10 @@ path.value = "{{ .RandomPath }}"
 function copyToClipboard() {
     navigator.clipboard.writeText(link.innerText).then(function(){
         clipboard.className = "good-copy"
+        clipboard.innerHTML = "Copied!"
     },function(err){
         clipboard.className = "bad-copy"
+        clipboard.innerHTML = "Failed!"
     });
 }
 
