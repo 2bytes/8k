@@ -26,6 +26,13 @@ The key to using CURL is to be sure to send the data using `--data-binary` to en
 Pass the filename to be uploaded to the `--data-binary` flag using `@<filename>`,
 > On the command line, you need to specify an endpoint to use, so just make one up thats easy to remember.
 
+If you wish for the server to generate the link randomly, simply post to the root;
+The server will generate the link according to the z-Base32 spec, accounting for the configured length, and return the link it generated.
+```
+curl -X POST --data-binary @nginx.log https://8k.fyi/
+https://8k.fyi/zwodxyqc
+```
+To specify your own link path, post to that endpoint instead;
 ```
 curl -X POST --data-binary @nginx.log https://8k.fyi/nlog
 https://8k.fyi/nlog
