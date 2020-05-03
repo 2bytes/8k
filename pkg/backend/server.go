@@ -97,6 +97,7 @@ func (s *Server) uploadFile(w http.ResponseWriter, r *http.Request) {
 	if len(data) > s.config.MaxBytes {
 		fmt.Printf("Uploaded data larger than max allowed bytes (%d) got: %d\n", s.config.MaxBytes, len(data))
 		http.Error(w, fmt.Sprintf("request data larger than max allowed (%d bytes)", s.config.MaxBytes), http.StatusRequestEntityTooLarge)
+		return
 	}
 
 	err = s.Storage.Store(fileName, data)
@@ -120,7 +121,7 @@ func (s *Server) uploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(s.config.FormatBaseAddress() + encodedURL.Path))
+	w.Write([]byte(s.config.FormatBaseAddress() + encodedURL.Path + "\n"))
 }
 
 func (s *Server) serveUploaded(w http.ResponseWriter, r *http.Request) {
