@@ -121,7 +121,7 @@ func (s *Server) uploadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(s.config.FormatBaseAddress() + encodedURL.Path))
+	w.Write([]byte(s.config.FormatBaseAddress() + encodedURL.Path + "\n"))
 }
 
 func (s *Server) serveUploaded(w http.ResponseWriter, r *http.Request) {
