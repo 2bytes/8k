@@ -1,6 +1,7 @@
 # 8k.fyi
 
-![Text Entry](screenshots/1-small.jpg) ![Link Created](screenshots/2-small.jpg) ![Copy Link to Clipboard](screenshots/3-small.jpg)
+![Text Entry](screenshots/01.gif)
+![Light Theme](screenshots/02.jpg) ![Copy/Share](screenshots/03.jpg)
 
 Text storage / link maker with a default byte max of 8192 (configurable).
 
