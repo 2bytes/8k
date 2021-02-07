@@ -1,10 +1,6 @@
-# ---> Go
-# Binaries for programs and plugins
-*.exe
-*.dll
-*.so
-*.dylib
-
 debug
-.vscode/launch.json
+.vscode
 tls
+**/*.crt
+**/*.key
+**/*.pem
