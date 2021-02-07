@@ -1,51 +1,40 @@
 package util
 
 import (
+	"bytes"
 	"image"
 	"image/color"
 	"image/png"
 	"net/http"
 )
 
-// P holds a pixel, and its name is shorter than P :D
+// P holds a pixel, and its name is shorter than Pixel :D
 type P struct {
 	X int
 	Y int
 }
 
-// FaviconData holds pixels to be 'coloured in' using a particular colour.
-type FaviconData struct {
+type faviconData struct {
 	Pixels []P
 }
 
-var fav8K = FaviconData{
+var fav8K = faviconData{
 	Pixels: []P{
-		// col1
-		P{2, 4}, P{2, 5}, P{2, 9}, P{2, 10},
-		// col2
-		P{3, 3}, P{3, 4}, P{3, 5}, P{3, 6}, P{3, 8}, P{3, 9}, P{3, 10}, P{3, 11},
-		// col3
-		P{4, 3}, P{4, 7}, P{4, 8}, P{4, 11},
-		// col4
-		P{5, 3}, P{5, 6}, P{5, 7}, P{5, 11},
-		// col4
-		P{6, 4}, P{6, 5}, P{6, 9}, P{6, 10},
-		// col5
-		P{7, 3}, P{7, 4}, P{7, 5}, P{7, 6}, P{7, 7}, P{7, 8}, P{7, 9}, P{7, 10}, P{7, 11},
-		// col6
-		P{8, 3}, P{8, 4}, P{8, 5}, P{8, 6}, P{8, 7}, P{8, 8}, P{8, 9}, P{8, 10}, P{8, 11},
-		// col7
-		P{9, 7}, P{9, 8}, P{9, 9},
-		// col8
-		P{10, 4}, P{10, 5}, P{10, 6}, P{10, 8}, P{10, 9}, P{10, 10},
-		// col9
-		P{11, 3}, P{11, 4}, P{11, 5}, P{11, 9}, P{11, 10}, P{11, 11},
-		// col10
-		P{12, 10}, P{12, 11},
+		{2, 4}, {2, 5}, {2, 9}, {2, 10}, // col1
+		{3, 3}, {3, 4}, {3, 5}, {3, 6}, {3, 8}, {3, 9}, {3, 10}, {3, 11}, // col2
+		{4, 3}, {4, 7}, {4, 8}, {4, 11},
+		{5, 3}, {5, 6}, {5, 7}, {5, 11},
+		{6, 4}, {6, 5}, {6, 9}, {6, 10},
+		{7, 3}, {7, 4}, {7, 5}, {7, 6}, {7, 7}, {7, 8}, {7, 9}, {7, 10}, {7, 11},
+		{8, 3}, {8, 4}, {8, 5}, {8, 6}, {8, 7}, {8, 8}, {8, 9}, {8, 10}, {8, 11},
+		{9, 7}, {9, 8}, {9, 9},
+		{10, 4}, {10, 5}, {10, 6}, {10, 8}, {10, 9}, {10, 10},
+		{11, 3}, {11, 4}, {11, 5}, {11, 9}, {11, 10}, {11, 11},
+		{12, 10}, {12, 11}, // col11
 	},
 }
 
-var favIcon *image.RGBA
+var favIconBytes = new(bytes.Buffer)
 
 func init() {
 	ul := image.Point{0, 0}
@@ -54,14 +43,14 @@ func init() {
 	img := image.NewRGBA(image.Rectangle{ul, br})
 
 	for _, p := range fav8K.Pixels {
-		img.Set(p.X, p.Y, color.White)
+		img.Set(p.X, p.Y, color.Gray16{0x5555})
 	}
 
-	favIcon = img
+	png.Encode(favIconBytes, img)
 
 }
 
-// GenerateFaviconPNG Generates and writes out a PNG favicon
-func GenerateFaviconPNG(w http.ResponseWriter) {
-	png.Encode(w, favIcon)
+// WriteFaviconPNG writes favIcon PNG bytes to the supplised ResponseWriter
+func WriteFaviconPNG(w http.ResponseWriter) {
+	w.Write(favIconBytes.Bytes())
 }

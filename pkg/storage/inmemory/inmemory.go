@@ -76,11 +76,8 @@ func (s *Storage) scrubber(interval time.Duration) {
 
 		ticker := time.NewTicker(interval)
 
-		for {
-			select {
-			case <-ticker.C:
-				s.scrub()
-			}
+		for range ticker.C {
+			s.scrub()
 		}
 	}
 }

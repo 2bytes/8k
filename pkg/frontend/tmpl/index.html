@@ -7,33 +7,85 @@
     <style>
 
         :root {
-            --accent-colour: {{.AccentColour}};
+            /* Palette from: https://coolors.co/f55d3e-343330-aa78a6-f7f5fb-76bed0 */
+            --clr1: #f55d3e;
+            --clr2: #aa78a6;
+            --clr3: #343330;
+            --clr4: #f7f5fb;
+            --clr5: #76bed0;
 
-            --drk-fg: #ccc;
-            --drk-bg: #000;
-            --drk-in-fg: #ccc;
-            --drk-in-bg: #111;
+            /* Common colours */
+            --btn-bg: var(--accent);
+            --fail: red;
+            --success: #4caf50;
+            --accent: var(--clr2);
 
-            --fg: #2b2b2b;
-            --bg: #fff;
-            --in-fg: #111;
-            --in-bg: #ccc;
+            /* Dark theme colours */
+            --drk-shadow: #252525;
+            --drk-fg: var(--clr4);
+            --drk-bg: var(--clr3);
+            --drk-in-fg: var(--clr2);
+            --drk-in-bg: var(--clr3);
+
+            /* Light theme colours */
+            --shadow: var(--clr3);
+            --fg: var(--clr3);
+            --bg: var(--clr5);
+            --in-bg: var(--clr4);
         }
 
         body {
             color: var(--fg);
             background-color: var(--bg);
             overflow-wrap: normal;
-            font-family: sans-serif;
+            font-family: monospace;
             width: fit-content;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            padding: 2%;
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+
+        #content {
+            width: 100%;
+        }
+
+        .box-shadow {
+            box-shadow: 2px 2px 2px var(--shadow);
+        }
+
+        .dark .box-shadow {
+            box-shadow: 2px 2px 2px var(--drk-shadow);
+        }
+
+        #data {
+            background-color: var(--in-bg);
+            width: 100%;
+            height: 400px;
+            border: 2px outset var(--accent);
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            margin-bottom: 1em;
+            padding: 10px;
+
+        }
+
+        #data:focus {
+            outline: none;
+        }
+
+        .dark #data {
+            color: var(--drk-in-fg);
+            background-color: var(--drk-in-bg);
         }
 
         .dark {
-                color: var(--drk-fg);
-                background-color: var(--drk-bg);
+            color: var(--drk-fg);
+            background-color: var(--drk-bg);
         }
 
         a {
@@ -45,39 +97,20 @@
         }
 
         h1 {
-            font-family: monospace;
-            border-bottom: 2px solid var(--accent-colour);
+            color: var(--accent);
+            text-shadow: 2px 2px 2px var(--shadow);
+        }
+
+        .dark h1 {
+            text-shadow: 2px 2px 2px var(--drk-shadow);
         }
 
         input {
             color: var(--in-fg);
             background-color: var(--in-bg);
-            font-family: monospace;
         }
 
         .dark input {
-            color: var(--drk-in-fg);
-            background-color: var(--drk-in-bg);
-        }
-
-        #data {
-            color: var(--in-fg);
-            background-color: var(--in-bg);
-            padding: 0.5em;
-            height: 50vh;
-            overflow-wrap: normal;
-            overflow-x: auto;
-            font-family: monospace !important;
-            border-color: var(--accent-colour);
-            width: 100%;
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
-            margin-bottom: 1em;
-
-        }
-
-        .dark #data {
             color: var(--drk-in-fg);
             background-color: var(--drk-in-bg);
         }
@@ -88,27 +121,28 @@
         }
 
         #link {
-            overflow-wrap: break-word;
-            border-bottom: 1px solid var(--accent-colour);
+            overflow-wrap: normal;
             margin-bottom: 10px;
             text-decoration: none;
             font-size: 1.5em;
-            font-family: monospace;
             font-weight: normal;
         }
 
         #path {
             border: none;
-            color: var(--in-fg);
-            background-color: var(--in-bg);
-            font-family: monospace;
-            font-size: 1.5em;
+            border-bottom: 1px solid var(--accent);
+            color: var(--accent);
+            background-color: var(--bg);
+            font-size: 1.3em;
+            width: 50%
+        }
+
+        #path:focus {
+            outline: none;
         }
 
         .dark #path {
-            color: var(--drk-in-fg);
-            background-color: var(--drk-in-bg);
-
+            background-color: var(--drk-bg);
         }
 
         #error {
@@ -117,16 +151,26 @@
             margin-left: 10px;
             white-space: pre-wrap;
             width: 70%;
+            margin-top: 2em;
         }
 
         #submit {
-            border-color: var(--accent-colour);
+
+            appearance: none;
+            -webkit-appearance: none;
+            border: none;
+            color: var(--fg);
+            background-color: var(--btn-bg);
             font-weight: 600;
-            font-size: 16px;
-            padding: 10pt;
-            width: 40pt;
+            font-size: 20px;
+            padding: 20pt;
             vertical-align: top;
+            margin-top: 1em;
             margin-bottom: 1em;
+        }
+
+        .dark #submit {
+            color: var(--drk-fg);
         }
 
         #clipboard,#share {
@@ -134,23 +178,30 @@
             cursor: pointer;
             padding: 0.5em;
             margin-bottom: 5px;
-            border: 1px solid var(--accent-colour);
+            border: 1px solid var(--accent);
             font-weight: normal;
         }
 
         .good-copy {
-            color: black;
-            background-color: chartreuse;
+            color: var(--fg);
+            background-color: var(--success);
+        }
+
+        .good-copy .dark {
+            color: var(--drk-fg);
         }
 
         .bad-copy {
-            color: black;
-            background-color: red;
+            color: var(--fg);
+            background-color: var(--fail);
+        }
+
+        .bad-copy .dark {
+            color: var(--drk-fg);
         }
 
         #footer-emoji {
             display: inline;
-            font-family: serif;
             font-size: 12px;
         }
 
@@ -161,33 +212,37 @@
         #footer {
             font-size: 10px;
             margin-top: auto;
-            border-top: 1px solid var(--accent-colour);
+            border-top: 1px solid var(--accent);
         }
 
         .theme {
             float: right;
-            font-family: sans-serif;
-            font-size: 0.7em;
         }
 
         .theme a {
             text-decoration: none;
+            color: transparent;
+            text-shadow: 0 0 0 var(--accent), 2px 2px 2px var(--shadow);
+        }
+
+        .dark .theme a {
+            text-shadow: 0 0 0 var(--accent), 2px 2px 2px var(--drk-shadow);
         }
 
     </style>
 </head>
 <body>
-    <h1>{{.Title}} <div class="theme"><a href="#">🌗</a></div></h1>
-<h4>This server is configured to allow {{ .MaxItems }} links of {{ .MaxBytes }} bytes. The TTL is configured for {{ .TTL }} after which time your link will be deleted.</h4>
+    <h1>㊙️ {{.Title}} <div class="theme"><a href="#">🕶️</a></div></h1>
 
 <div id="content">
-<div id="wrapper"><div style="padding-bottom: 2em;"><a id=link>{{ .BaseAddress }}<input id="path" type="text"/></a></div><div id="clipboard" onclick="copyToClipboard()">📋 Copy to Clipboard</div></a><div id="share" onclick="shareLink()">📤 Share</div></div>
-<textarea placeholder="whitespace is preserved " id="data" name="data" maxlength="{{ .MaxBytes }}" autocomplete="off"></textarea>
+<div id="wrapper"><div style="padding-bottom: 2em;"><a id=link>{{ .BaseAddress }}<input id="path" type="text"/></a></div><div id="clipboard" onclick="copyToClipboard()">📋 Copy link to Clipboard</div></a><div id="share" onclick="shareLink()">📤 Share</div></div>
+<textarea placeholder="add text here, whitespace is preserved " id="data" name="data" class="box-shadow" maxlength="{{ .MaxBytes }}" autocomplete="off"></textarea>
 
-<input id="submit" type="submit" onclick="window.onsubmit()" value="Go"><div id="error"></div>
+<input id="submit" class="box-shadow" type="submit" onclick="window.onsubmit()" value="Go"><div id="error"></div>
 </div>
 
 <footer id="footer">
+    <h4>This server is configured to allow {{ .MaxItems }} links of {{ .MaxBytes }} bytes. The TTL is configured for [ {{ .TTL }} ] after which time your link will be deleted.</h4>
     [ Made with <div id="footer-emoji">☕</div> in <div id="footer-emoji">🇬🇧</div> ] <b>src:</b> <a href="https://github.com/2bytes/8k">Github</a>, <b>v:</b> {{ .Version }}
 </footer>
 
@@ -204,10 +259,10 @@ path.value = "{{ .RandomPath }}"
 function copyToClipboard() {
     navigator.clipboard.writeText(link.innerText).then(function(){
         clipboard.className = "good-copy"
-        clipboard.innerHTML = "Copied!"
+        clipboard.innerHTML = "📋 Link copied to clipboard!"
     },function(err){
         clipboard.className = "bad-copy"
-        clipboard.innerHTML = "Failed!"
+        clipboard.innerHTML = "📋 Copy to clipboard failed!"
     });
 }
 
@@ -288,5 +343,3 @@ if (window.localStorage) {
 
 </body>
 </html>
-
-
