@@ -42,7 +42,7 @@ func newUIData(c *config.Config) *frontend.Data {
 		AccentColour: c.AccentColour,
 		MaxBytes:     c.MaxBytes,
 		MaxItems:     c.MaxItemsStored,
-		TTL:          c.TTL,
+		TTL:          c.FormattedTime(),
 		BaseAddress:  c.FormatBaseAddress(),
 		RandomPath:   util.GenerateZBase32RandomPath(c.PathLength),
 		Version:      config.Version,
@@ -154,7 +154,7 @@ func (s *Server) HandleRequest(w http.ResponseWriter, r *http.Request) {
 			s.serveIndex(w, r)
 		} else {
 			if r.URL.Path == "/favicon.ico" {
-				util.GenerateFaviconPNG(w)
+				util.WriteFaviconPNG(w)
 				return
 			}
 			s.serveUploaded(w, r)

@@ -59,7 +59,12 @@ type Config struct {
 	BindTLS        bool
 	MaxBytes       int
 	MaxItemsStored int
-	TTL            time.Duration
+	ttl            time.Duration
+}
+
+// FormattedTime returns a human readable formatted time for display
+func (c *Config) FormattedTime() string {
+	return FormatTime(c.ttl)
 }
 
 // Get returns the configuration flags for the server
@@ -73,7 +78,7 @@ func Get() *Config {
 		MaxBytes:       *MaxBytes,
 		MaxItemsStored: *MaxItemsStored,
 		PathLength:     *PathLength,
-		TTL:            *DataTTL,
+		ttl:            *DataTTL,
 	}
 
 	return cfg
