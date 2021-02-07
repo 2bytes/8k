@@ -8,21 +8,15 @@ import (
 
 type statusCoder struct {
 	http.ResponseWriter
-	statusCode  int
-	wroteHeader bool
+	statusCode int
 }
 
 func (sc *statusCoder) WriteHeader(code int) {
 	sc.ResponseWriter.WriteHeader(code)
 	sc.statusCode = code
-	sc.wroteHeader = true
 }
 
 func (sc *statusCoder) Write(b []byte) (int, error) {
-	if !sc.wroteHeader {
-		sc.WriteHeader(http.StatusOK)
-	}
-
 	w := sc.ResponseWriter.(http.ResponseWriter)
 	out, err := w.Write(b)
 	return out, err
@@ -32,7 +26,7 @@ func (sc *statusCoder) Write(b []byte) (int, error) {
 func StatusCoder(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		scUtil := &statusCoder{w, 0, false}
+		scUtil := &statusCoder{w, 0}
 		h(scUtil, r)
 
 		// <start> <status> <elapsed> <method> <path> <proto> <user-agent>
