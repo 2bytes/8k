@@ -62,17 +62,17 @@ This project currently requires no external dependencies. There are no modules t
 
 ## Docker
 ```
-docker build -t 2bytes/8k --build-arg VERSION='1.0.1' .
+docker build -t 2bytes/8k --build-arg VERSION='v1.0.4' .
 ```
 
 ## Buildah
 ```
-buildah bud -f Dockerfile --build-arg VERSION='1.0.1' -t 2bytes/8k .
+buildah bud -f Dockerfile --build-arg VERSION='v1.0.4' -t 2bytes/8k .
 ```
 
 ## Binary
 ```
-CGO_ENABLED=0 go build -o 8192 -ldflags "-X github.com/2bytes/8k/internal/config.Version=1.0.1" cmd/8192/main.go
+CGO_ENABLED=0 go build -o 8192 -ldflags "-X github.com/2bytes/8k/internal/config.Version=v1.0.4" cmd/8192/main.go
 
 ```
 
