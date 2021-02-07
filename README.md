@@ -1,6 +1,7 @@
 # 8k.fyi
 
-![Text Entry](screenshots/1-small.jpg) ![Link Created](screenshots/2-small.jpg) ![Copy Link to Clipboard](screenshots/3-small.jpg)
+![Text Entry](screenshots/01.gif)
+![Light Theme](screenshots/02.jpg) ![Copy/Share](screenshots/03.jpg)
 
 Text storage / link maker with a default byte max of 8192 (configurable).
 
@@ -61,17 +62,17 @@ This project currently requires no external dependencies. There are no modules t
 
 ## Docker
 ```
-docker build -t 2bytes/8k --build-arg VERSION='1.0.1' .
+docker build -t 2bytes/8k --build-arg VERSION='v1.0.4' .
 ```
 
 ## Buildah
 ```
-buildah bud -f Dockerfile --build-arg VERSION='1.0.1' -t 2bytes/8k .
+buildah bud -f Dockerfile --build-arg VERSION='v1.0.4' -t 2bytes/8k .
 ```
 
 ## Binary
 ```
-CGO_ENABLED=0 go build -o 8192 -ldflags "-X github.com/2bytes/8k/internal/config.Version=1.0.1" cmd/8192/main.go
+CGO_ENABLED=0 go build -o 8192 -ldflags "-X github.com/2bytes/8k/internal/config.Version=v1.0.4" cmd/8192/main.go
 
 ```
 
