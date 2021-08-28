@@ -42,7 +42,7 @@ jobs:
           env
           VERSION="dev"
           if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
+            VERSION=${GITHUB_REF#refs/tags/}
           fi
           TAGS="--tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$VERSION"
           if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
