@@ -41,5 +41,5 @@ const (
 	DefaultTLSKeyFilePath = "/tls/private.key"
 
 	// DefaultIndexFilePath is the default location for the html frontend
-	DefaultIndexFilePath = "/frontend/index.html"
+	DefaultIndexFilePath = ""
 )

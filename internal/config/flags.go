@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	// Version of the server. Set at build time using -ldflags "-X main.version=<version number>"
+	// Version of the server. Set at build time using -ldflags "-X github.com/2bytes/8k/internal/config.Version=<version number>"
 	Version = "development"
 
 	// ShowVersion displays the version and exits, when provided
@@ -40,7 +40,7 @@ var (
 	PublicPort = flag.Int(("ui-port"), DefaultPublicPort, "UI: set the public port displayed in the UI/text/links")
 
 	// UIFileHTML is the path to the HTML file for the UI
-	UIFileHTML = flag.String("html", DefaultIndexFilePath, "set the path to the index html template file for the frontend")
+	UIFileHTML = flag.String("html", DefaultIndexFilePath, "set the path to the index html template file for the frontend to override the embedded html")
 
 	// TLSCertFile set the location of the TLS certificate file for binding TLS
 	TLSCertFile = flag.String("tls-cert", DefaultTLSCertFilePath, "path to the TLS certificate")

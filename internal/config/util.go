@@ -56,7 +56,7 @@ func FormatTime(t time.Duration) string {
 		return "∞"
 	}
 
-	var seconds, secondsCarried float64 = 0, 0
+	var seconds, secondsCarried float64
 	if t.Seconds() < 60 {
 		secondsCarried = t.Seconds()
 	} else {
