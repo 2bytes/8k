@@ -53,7 +53,15 @@ func newUIData(c *config.Config) *frontend.Data {
 
 func (s *Server) serveIndex(w http.ResponseWriter, r *http.Request) {
 
-	tpl, err := template.ParseFiles(*config.UIFileHTML)
+	var tpl *template.Template
+	var err error
+
+	if *config.UIFileHTML == "" {
+		tpl, err = template.ParseFS(frontend.IndexFS, frontend.IndexFile)
+	} else {
+		tpl, err = template.ParseFiles(*config.UIFileHTML)
+	}
+
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Failed to load index file template", http.StatusInternalServerError)

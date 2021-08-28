@@ -58,29 +58,27 @@ http https://8k.fyi/tf > file.txt
 
 # Building
 
-This project currently requires no external dependencies. There are no modules to pull, just build the code and run it.
+This project currently requires no external dependencies. There are no modules to pull/vendor, just build the code and run it.
 
 ## Docker
-```
-docker build -t 2bytes/8k --build-arg VERSION='v1.0.4' .
-```
 
-## Buildah
+> Requires buildkit (Docker 18.09+)
+
 ```
-buildah bud -f Dockerfile --build-arg VERSION='v1.0.4' -t 2bytes/8k .
+DOCKER_BUILDKIT=1 docker build -t 2bytes/8k --build-arg VERSION='v1.0.6' .
 ```
 
 ## Binary
 ```
-CGO_ENABLED=0 go build -o 8192 -ldflags "-X github.com/2bytes/8k/internal/config.Version=v1.0.4" cmd/8192/main.go
+CGO_ENABLED=0 go build -o 8192 -ldflags "-X github.com/2bytes/8k/internal/config.Version=v1.0.6" cmd/8192/main.go
 
 ```
 
 # Running
 
-The container version can be run using Docker/Podman, and the binary can be executed on the platform for which it was built.
+The container version can be run using Docker, Podman, in Kubernetes etc, and the binary can be executed on the platform for which it was built.
 
-There are various flags for configuring the server, only `--iu-addr` is required.
+There are various flags for configuring the server, only `--ui-addr` is required.
 
 ```
 Usage of ./8192:
@@ -89,7 +87,7 @@ Usage of ./8192:
   -addr string
             set the bind address
   -html string
-            set the path to the index html template file for the frontend (default "/frontend/index.html")
+            set the path to the index html template file for the frontend to override the embedded html
   -https
             enable TLS
   -mb int
