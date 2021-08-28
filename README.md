@@ -1,4 +1,6 @@
-# 8k.fyi [![Go Report Card](https://goreportcard.com/badge/github.com/2bytes/8k)](https://goreportcard.com/report/github.com/2bytes/8k)
+
+
+# 8k.fyi [![Go Report Card](https://goreportcard.com/badge/github.com/2bytes/8k)](https://goreportcard.com/report/github.com/2bytes/8k) [![CodeQL](https://github.com/2bytes/8k/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/2bytes/8k/actions/workflows/codeql-analysis.yml)
 
 ![Text Entry](screenshots/01.gif)
 ![Light Theme](screenshots/02.jpg) ![Copy/Share](screenshots/03.jpg)
