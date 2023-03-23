@@ -33,7 +33,7 @@ var (
 	BindPort = flag.Int("port", DefaultBindPort, "set the bind port")
 
 	// PublicProtoTLS sets whether to use 'https' for links in the UI
-	PublicProtoTLS = flag.Bool("ui-https", false, "UI: use 'https' as the proto displayed in the UI text/links")
+	PublicProtoTLS = flag.Bool("ui-https", DefaultPublicProtoTLS, "UI: use 'https' as the proto displayed in the UI text/links")
 	// PublicAddress sets the address or hostname used in the UI
 	PublicAddress = flag.String("ui-addr", DefaultPublicAddress, "UI: set the public address displayed in the UI text/links")
 	// PublicPort sets the port used in the UI
