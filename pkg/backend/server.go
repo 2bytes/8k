@@ -31,20 +31,15 @@ func NewServer(storageBackend storage.Mediator) Server {
 	return s
 }
 
-// BaseAddress returns the servers public base address as configured.
-func (s *Server) BaseAddress() string {
-	return s.config.FormatBaseAddress()
-}
-
-func newUIData(c *config.Config) *frontend.Data {
+func (s *Server) newUIData(r *http.Request) *frontend.Data {
 	ui := &frontend.Data{
-		Title:        c.Title,
-		AccentColour: c.AccentColour,
-		MaxBytes:     c.MaxBytes,
-		MaxItems:     c.MaxItemsStored,
-		TTL:          c.FormattedTime(),
-		BaseAddress:  c.FormatBaseAddress(),
-		RandomPath:   util.GenerateZBase32RandomPath(c.PathLength),
+		Title:        s.config.Title,
+		AccentColour: s.config.AccentColour,
+		MaxBytes:     s.config.MaxBytes,
+		MaxItems:     s.config.MaxItemsStored,
+		TTL:          s.config.FormattedTime(),
+		BaseAddress:  util.FormatBaseAddress(s.config, r),
+		RandomPath:   util.GenerateZBase32RandomPath(s.config.PathLength),
 		Version:      config.Version,
 	}
 
@@ -68,7 +63,7 @@ func (s *Server) serveIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ui := newUIData(s.config)
+	ui := s.newUIData(r)
 
 	for s.Storage.Contains(ui.RandomPath) {
 		fmt.Printf("Path %s in use, generating another\n", ui.RandomPath)
@@ -130,7 +125,7 @@ func (s *Server) uploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add("Content-Type", "text/plain")
-	w.Write([]byte(s.config.FormatBaseAddress() + encodedURL.Path + "\n"))
+	w.Write([]byte(util.FormatBaseAddress(s.config, r) + encodedURL.Path + "\n"))
 }
 
 func (s *Server) serveUploaded(w http.ResponseWriter, r *http.Request) {
