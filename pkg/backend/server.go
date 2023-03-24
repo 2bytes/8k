@@ -38,7 +38,7 @@ func (s *Server) newUIData(r *http.Request) *frontend.Data {
 		MaxBytes:     s.config.MaxBytes,
 		MaxItems:     s.config.MaxItemsStored,
 		TTL:          s.config.FormattedTime(),
-		BaseAddress:  s.config.FormatBaseAddressStringBuilder(r),
+		BaseAddress:  util.FormatBaseAddress(s.config, r),
 		RandomPath:   util.GenerateZBase32RandomPath(s.config.PathLength),
 		Version:      config.Version,
 	}
@@ -125,7 +125,7 @@ func (s *Server) uploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add("Content-Type", "text/plain")
-	w.Write([]byte(s.config.FormatBaseAddress(r) + encodedURL.Path + "\n"))
+	w.Write([]byte(util.FormatBaseAddress(s.config, r) + encodedURL.Path + "\n"))
 }
 
 func (s *Server) serveUploaded(w http.ResponseWriter, r *http.Request) {

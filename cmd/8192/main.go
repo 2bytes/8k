@@ -26,7 +26,7 @@ func main() {
 
 	s := backend.NewServer(storage.NewMediator(inmemory.New(*config.DataTTL, time.Second, *config.MaxItemsStored)))
 
-	http.HandleFunc("/", util.StatusCoder(s.HandleRequest))
+	http.HandleFunc("/", util.StatusCoder(s.HandleRequest, config.Get()))
 
 	bindAddrDisplay := *config.BindAddress
 	if bindAddrDisplay == "" {
