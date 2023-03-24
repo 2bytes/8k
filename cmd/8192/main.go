@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"runtime"
@@ -25,12 +24,6 @@ func main() {
 		os.Exit(0)
 	}
 
-	if *config.PublicAddress == "" {
-		log.Println("public address cannot be empty")
-		flag.Usage()
-		os.Exit(1)
-	}
-
 	s := backend.NewServer(storage.NewMediator(inmemory.New(*config.DataTTL, time.Second, *config.MaxItemsStored)))
 
 	http.HandleFunc("/", util.StatusCoder(s.HandleRequest))
@@ -41,7 +34,6 @@ func main() {
 	}
 
 	var err error
-	fmt.Printf("UI address set to: %s\n", s.BaseAddress())
 
 	if *config.BindTLS {
 		fmt.Printf("Binding: https://%s:%d\n", bindAddrDisplay, *config.BindPort)
@@ -54,6 +46,6 @@ func main() {
 	}
 
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
 	}
 }

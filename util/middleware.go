@@ -17,8 +17,7 @@ func (sc *statusCoder) WriteHeader(code int) {
 }
 
 func (sc *statusCoder) Write(b []byte) (int, error) {
-	w := sc.ResponseWriter.(http.ResponseWriter)
-	out, err := w.Write(b)
+	out, err := sc.ResponseWriter.Write(b)
 	return out, err
 }
 
@@ -26,10 +25,10 @@ func (sc *statusCoder) Write(b []byte) (int, error) {
 func StatusCoder(h http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		scUtil := &statusCoder{w, 0}
+		scUtil := &statusCoder{w, http.StatusOK}
 		h(scUtil, r)
 
 		// <start> <status> <elapsed> <method> <path> <proto> <user-agent>
-		fmt.Printf("%s %3d %5s %s %s %s %s\n", start.Format("02/Jan/2006:15:04:05 -0700"), scUtil.statusCode, time.Since(start).Truncate(time.Microsecond), r.Method, r.URL.Path, r.Proto, r.UserAgent())
+		fmt.Printf("%s %3d %7s %4s %s %s %s\n", start.Format("02/Jan/2006:15:04:05 -0700"), scUtil.statusCode, time.Since(start).Truncate(time.Microsecond), r.Method, r.URL.Path, r.Proto, r.UserAgent())
 	})
 }
