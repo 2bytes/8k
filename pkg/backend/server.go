@@ -6,12 +6,18 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/2bytes/8k/internal/config"
 	"github.com/2bytes/8k/pkg/frontend"
 	"github.com/2bytes/8k/pkg/storage"
 	"github.com/2bytes/8k/pkg/storage/inmemory"
 	"github.com/2bytes/8k/util"
+)
+
+const (
+	IPv4Prefix = "ip."
+	IPv6Prefix = "ip6."
 )
 
 // Server defines all of the server configuration used throughout
@@ -153,6 +159,17 @@ func (s *Server) serveUploaded(w http.ResponseWriter, r *http.Request) {
 // from the frontend
 func (s *Server) HandleRequest(w http.ResponseWriter, r *http.Request) {
 
+	if strings.HasPrefix(r.Host, IPv6Prefix) {
+		// TODO Format to strip port
+		w.Write([]byte(r.RemoteAddr))
+		return
+	}
+
+	if strings.HasPrefix(r.Host, IPv4Prefix) {
+		w.Write([]byte(strings.Split(r.RemoteAddr, ":")[0]))
+		return
+	}
+
 	switch r.Method {
 	case http.MethodGet:
 		if r.URL.Path == "/" {
@@ -169,4 +186,8 @@ func (s *Server) HandleRequest(w http.ResponseWriter, r *http.Request) {
 	default:
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	}
+}
+
+func (s *Server) HandleUtilityFunction(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("Utility function called: %s\n", r.URL)
 }
