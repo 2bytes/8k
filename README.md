@@ -15,7 +15,7 @@ Currently the server requires no external dependencies, however, it may become n
 
 # Demo
 
-https://8k.fyi
+https://8k.2byt.es
 
 # Link Path
 
@@ -32,30 +32,30 @@ Pass the filename to be uploaded to the `--data-binary` flag using `@<filename>`
 If you wish for the server to generate the link randomly, simply post to the root;
 The server will generate the link according to the z-Base32 spec, accounting for the configured length, and return the link it generated.
 ```
-curl -X POST --data-binary @nginx.log https://8k.fyi/
-https://8k.fyi/zwodxyqc
+curl -X POST --data-binary @nginx.log https://8k.2byt.es/
+https://8k.2byt.es/zwodxyqc
 ```
 To specify your own link path, post to that endpoint instead;
 ```
-curl -X POST --data-binary @nginx.log https://8k.fyi/nlog
-https://8k.fyi/nlog
+curl -X POST --data-binary @nginx.log https://8k.2byt.es/nlog
+https://8k.2byt.es/nlog
 ```
 or alternatively if you want to cat or send the output of another command,
 pipe the data to curl, and tell curl to read from stdin using `--data-binary @-`
 ```
-cat datasheet.pdf | curl -X POST --data-binary @- https://8k.fyi/d.pdf
-https://8k.fyi/d.pdf
+cat datasheet.pdf | curl -X POST --data-binary @- https://8k.2byt.es/d.pdf
+https://8k.2byt.es/d.pdf
 ```
 A successful upload will return a 200 OK and the URL to the data you uploaded
 
 ## HTTPie
 
 ```
-http https://8k.fyi/tf < file.txt
+http https://8k.2byt.es/tf < file.txt
 ```
 you can retrieve the file just as simply;
 ```
-http https://8k.fyi/tf > file.txt
+http https://8k.2byt.es/tf > file.txt
 ```
 
 # Building
